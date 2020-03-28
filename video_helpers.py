@@ -3,6 +3,8 @@ import numpy as np
 import cv2
 from project_types import NumpyArray
 
+""" More informations about how to handle video with OpenCV here :
+    https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_gui/py_video_display/py_video_display.html"""
 
 def convert_video_to_np_array(file_path: str) -> Tuple[NumpyArray, float]:
     """ Read the video file located at the provided file path and, using opencv, convert it to a numpy array.
