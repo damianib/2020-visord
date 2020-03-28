@@ -5,9 +5,10 @@ import cv2
 NumpyArray = Any
 
 
-def convert_video_to_np_array(file_path: str) -> NumpyArray:
+def convert_video_to_np_array(file_path: str) -> Tuple[NumpyArray, float]:
     images = []
     cap = cv2.VideoCapture(file_path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
     while (cap.isOpened()):
         ret, frame = cap.read()
         if ret:
@@ -15,7 +16,7 @@ def convert_video_to_np_array(file_path: str) -> NumpyArray:
         if not ret:
             cap.release()
     all_frames = np.array(images)
-    return all_frames
+    return all_frames, fps
 
 
 def read_np_array_as_video(frames: NumpyArray, auto_destroy: bool = True) -> None:
@@ -26,12 +27,11 @@ def read_np_array_as_video(frames: NumpyArray, auto_destroy: bool = True) -> Non
         cv2.destroyAllWindows()
 
 
-def convert_np_array_to_video(frames: NumpyArray, out_path: str, frames_per_sec: int, codec: str = 'DIVX') -> None:
+def convert_np_array_to_video(frames: NumpyArray, out_path: str, fps: float, codec: str = 'DIVX') -> None:
     width, height = get_width_and_height_from_frames(frames)
-    print(width, height)
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*codec)
-    out = cv2.VideoWriter('output/output.avi', fourcc, frames_per_sec, (width, height))
+    out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
     for frame in frames:
         out.write(frame)
     # Release everything if job is finished
@@ -39,11 +39,10 @@ def convert_np_array_to_video(frames: NumpyArray, out_path: str, frames_per_sec:
 
 
 def get_width_and_height_from_frames(frames: NumpyArray) -> Tuple[int, int]:
-    width, height = frames[0].shape[0], frames[0].shape[1]
+    width, height = frames[0].shape[1], frames[0].shape[0]
     return width, height
 
-frames = convert_video_to_np_array('resources/result-face.mp4')
-#read_np_array_as_video(frames)
 
-frames_per_sec = 20
-convert_np_array_to_video(frames, 'output/output.avi', frames_per_sec)
+frames, fps = convert_video_to_np_array('resources/result-face.mp4')
+read_np_array_as_video(frames)
+convert_np_array_to_video(frames, 'output/output.avi', fps)
