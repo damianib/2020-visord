@@ -6,6 +6,7 @@ from project_types import NumpyArray
 """ More informations about how to handle video with OpenCV here :
     https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_gui/py_video_display/py_video_display.html"""
 
+
 def convert_video_to_np_array(file_path: str) -> Tuple[NumpyArray, float]:
     """ Read the video file located at the provided file path and, using opencv, convert it to a numpy array.
     Each element of the  array represents a frame of the video. Each frame of the video is itself a matrix of pixel
@@ -25,12 +26,13 @@ def convert_video_to_np_array(file_path: str) -> Tuple[NumpyArray, float]:
     return all_frames, fps
 
 
-def read_np_array_as_video(frames: NumpyArray, ms_per_frame: int = 1, auto_destroy: bool = True) -> None:
+def read_np_array_as_video(frames: NumpyArray, ms_per_frame: int = 1, auto_destroy: bool = True,
+                           auto_convert: bool = False) -> None:
     """Print the frames of the provided numpy array (HSV representation), one at a time,
     waiting the provided time between each frame.
      If auto destroy is set to True, the plot window is automatically destroyed at the end of the function call."""
     for frame in frames:
-        converted_frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
+        converted_frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR) if auto_convert else frame
         cv2.imshow('frame', converted_frame)
         cv2.waitKey(ms_per_frame)
     if auto_destroy:
