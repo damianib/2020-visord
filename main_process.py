@@ -9,17 +9,25 @@ import numpy as np
 
 def merge_with_processed(original_frames: NumpyArray, processed_frames: NumpyArray, alpha: float,
                          chrome_attenuation: float) -> NumpyArray:
-    # Amplification
-    reduced_width, reduced_height = get_width_and_height_from_frames(processed_frames)
+
     dest_width, dest_height = get_width_and_height_from_frames(original_frames)
-    total_time = processed_frames.shape[0]
-    processed_frames_amplified = np.zeros((total_time, reduced_height, reduced_width, 3))
-    processed_frames_amplified[:][:][:][0] = processed_frames[:][:][:][0] * alpha
-    processed_frames_amplified[:][:][:][1] = processed_frames[:][:][:][0] * alpha * chrome_attenuation
-    processed_frames_amplified[:][:][:][2] = processed_frames[:][:][:][0] * alpha * chrome_attenuation
-    # Merging
-    merged = original_frames + cv2.resize(processed_frames_amplified, (dest_height, dest_width))
-    return merged
+    images = []
+    for index, frame in enumerate(processed_frames):
+        # Amplification
+        h, s, v = cv2.split(frame)
+        h *= alpha
+        s *= alpha * chrome_attenuation
+        v *= alpha * chrome_attenuation
+        amplified_frame = cv2.merge((h, s, v))
+        # Merging
+        resized_amplified_frame = cv2.resize(amplified_frame, (dest_width, dest_height))
+        original_frame = original_frames[index]
+
+        merged = cv2.cvtColor(original_frame, cv2.COLOR_HSV2BGR) + cv2.cvtColor(resized_amplified_frame, cv2.COLOR_HSV2BGR)
+        merged
+        #merged = cv2.addWeighted(original_frame, 1, resized_amplified_frame, 0.1, 0)
+        images.append(merged)
+    return np.array(images).astype(np.uint8)
 
 
 def process_video(source_path: str, out_path: str, downsample_level: int, lowcut: float, highcut: float, fs: float,
@@ -27,9 +35,5 @@ def process_video(source_path: str, out_path: str, downsample_level: int, lowcut
     frames, fps = convert_video_to_np_array(source_path)
     spatially_processed_frames = blur_and_downsample_video(frames, downsample_level)
     processed_frames = frequential_filter_video(spatially_processed_frames, lowcut, highcut, fs, order)
-    print(frames.shape)
-    print(processed_frames.shape)
-    print(processed_frames)
-    convert_np_array_to_video(processed_frames, out_path, fps)
-    #merged_frames = merge_with_processed(frames, processed_frames, alpha, chrome_attenuation)
-    #convert_np_array_to_video(merged_frames, out_path, fps)
+    merged_frames = merge_with_processed(frames, processed_frames, alpha, chrome_attenuation)
+    convert_np_array_to_video(merged_frames, out_path, fps)
