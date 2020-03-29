@@ -22,10 +22,7 @@ def merge_with_processed(original_frames: NumpyArray, processed_frames: NumpyArr
         # Merging
         resized_amplified_frame = cv2.resize(amplified_frame, (dest_width, dest_height))
         original_frame = original_frames[index]
-
-        merged = cv2.cvtColor(original_frame, cv2.COLOR_HSV2BGR) + cv2.cvtColor(resized_amplified_frame, cv2.COLOR_HSV2BGR)
-        merged
-        #merged = cv2.addWeighted(original_frame, 1, resized_amplified_frame, 0.1, 0)
+        merged = cv2.addWeighted(original_frame, 1, resized_amplified_frame, 0.3, 0)
         images.append(merged)
     return np.array(images).astype(np.uint8)
 
