@@ -3,8 +3,8 @@ from main_process import process_video
 
 # CONFIG
 
-source_path = "resources/benoit-face.mp4"
-out_path = "output/output.avi"
+source_path = "resources/original-face.mp4"
+out_path = "output.avi"
 downsample_level = 4
 lowcut = 50 / 60
 highcut = 60 / 60
