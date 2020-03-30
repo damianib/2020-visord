@@ -1,9 +1,25 @@
-from spatial_processing import blur_and_downsample_video
-from video_helpers import convert_video_to_np_array, read_np_array_as_video, convert_np_array_to_video
+import time
+from main_process import process_video
 
+# CONFIG
 
-frames, fps = convert_video_to_np_array('resources/result-face.mp4')
-#read_np_array_as_video(frames)
-spatially_processed_frames = blur_and_downsample_video(frames, 5)
-convert_np_array_to_video(spatially_processed_frames, 'output/output.avi', fps)
+source_path = "resources/benoit-face.mp4"
+out_path = "output/output.avi"
+downsample_level = 4
+lowcut = 50 / 60
+highcut = 60 / 60
+fs = 30
+order = 5
+alpha = 50
+chrome_attenuation = 1
 
+# PROCESSING
+
+print("Starting processing video...")
+begin_time = time.time()
+
+process_video(source_path, out_path, downsample_level, lowcut, highcut, fs,
+              order, alpha, chrome_attenuation)
+
+end_time = time.time()
+print(f"Processing finished. Time taken : {end_time - begin_time}")
