@@ -15,7 +15,8 @@ def h_distance(h1: int, h2: int):
 def merge_with_processed(original_frames: NumpyArray, processed_frames: NumpyArray, alpha: float,
                          chrome_attenuation: float, distance_threshold: int, downsample_level: int) -> NumpyArray:
     """Merge the original frames of the video with the processed frames (spatially and temporaly).
-    Alpha and chrome attenuation are used to prettify the merge of the 2 array of frames."""
+    Alpha and chrome attenuation are used to prettify the merge of the 2 array of frames.
+    Distance threshold is used to only keep colors close to red."""
     dest_width, dest_height = get_width_and_height_from_frames(original_frames)
     images = []
     for index, frame in enumerate(processed_frames):
