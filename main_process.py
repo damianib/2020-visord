@@ -33,9 +33,10 @@ def merge_with_processed(original_frames: NumpyArray, processed_frames: NumpyArr
         s *= (distances < distance_threshold)
         v *= (distances < distance_threshold)
         filtered_frame = cv2.merge((h, s, v))
-        # Resizing
+        # Resizing and smoothing
         for i in range(downsample_level):
             filtered_frame = cv2.pyrUp(filtered_frame)
+            filtered_frame = cv2.blur(filtered_frame, (20, 20))
         resized_filtered_frame = cv2.resize(filtered_frame, (dest_width, dest_height))
         # Merging
         original_frame = original_frames[index]
