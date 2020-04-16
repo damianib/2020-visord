@@ -4,7 +4,7 @@ from main_process import process_video
 # CONFIG
 
 source_path = "resources/original-face.mp4"
-out_path = "output.avi"
+out_path = "output/output.avi"
 downsample_level = 3
 lowcut = 50 / 60
 highcut = 60 / 60
