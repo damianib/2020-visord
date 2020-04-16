@@ -14,7 +14,8 @@ def h_distance(h1: int, h2: int):
 
 
 def merge_with_processed(original_frames: NumpyArray, processed_frames: NumpyArray, alpha: float,
-                         chrome_attenuation: float, distance_threshold: int, downsample_level: int) -> NumpyArray:
+                         chrome_attenuation: float, distance_threshold: int, downsample_level: int,
+                         heartbeats: float) -> NumpyArray:
     """Merge the original frames of the video with the processed frames (spatially and temporaly).
     Alpha and chrome attenuation are used to prettify the merge of the 2 array of frames.
     Distance threshold is used to only keep colors close to red."""
@@ -43,7 +44,8 @@ def merge_with_processed(original_frames: NumpyArray, processed_frames: NumpyArr
         original_frame = original_frames[index]
         merged = cv2.addWeighted(original_frame, 0.8, resized_filtered_frame, 0.2, 0)
         # Add bpm in the top left corner of the video
-        cv2.putText(img=merged, text="53 bpm", org=(25, 25), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
+        heartbeats_str = str(int(heartbeats)) + " bpm"
+        cv2.putText(img=merged, text=heartbeats_str, org=(25, 25), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
                     color=(0, 255, 255), thickness=2, lineType=cv2.LINE_AA)
         images.append(merged)
     return np.array(images).astype(np.uint8)
@@ -62,5 +64,5 @@ def process_video(source_path: str, out_path: str, downsample_level: int, lowcut
     heartbeats = get_heartbeats(processed_frames, fps)
     print("Detected bpm :", heartbeats)
     merged_frames = merge_with_processed(frames, processed_frames, alpha, chrome_attenuation, distance_threshold,
-                                         downsample_level)
+                                         downsample_level, heartbeats)
     convert_np_array_to_video(merged_frames, out_path, fps)
